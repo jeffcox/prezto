@@ -2,4 +2,4 @@
 
 source ${ZDOTDIR:-$HOME}/.zprezto/modules/k/external/k.sh
 alias ka='k -a'
-alias kh="k -h'
+alias kh='k -h'
