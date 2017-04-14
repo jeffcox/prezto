@@ -19,3 +19,7 @@ alias cdf='cd "$(pfd)"'
 
 # Pushes directory to the current Finder directory.
 alias pushdf='pushd "$(pfd)"'
+
+# Start and stop tftpd
+alias tftpd.start='sudo launchctl load -w /System/Library/LaunchDaemons/tftp.plist'
+alias tftpd.stop='sudo launchctl unload -w /System/Library/LaunchDaemons/tftp.plist'

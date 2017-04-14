@@ -32,3 +32,17 @@ alias portU='sudo port selfupdate && sudo port upgrade outdated'
 alias portu='sudo port upgrade'
 alias portX='sudo port -u uninstall'
 alias portx='sudo port uninstall'
+
+#
+# Use pbzip2 if present for faster archiving
+#
+
+if [[ -x $(which pbzip2 2>/dev/null) ]]; then
+  alias bzip2=pbzip2
+  alias bunzip2=pbunzip2
+fi
+
+# Macports Postgres control
+# alias postgres.start='sudo launchctl start org.macports.postgresql94-server'
+# alias postgres.stop='sudo launchctl stop org.macports.postgresql94-server'
+# alias postgres.restart='postgres.stop && postgres.start'
