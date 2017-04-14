@@ -11,3 +11,27 @@ if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
 fi
 
 # Customize to your needs...
+
+# Metasploit embedded Postgres shutdown
+alias postgres.stop="/opt/metasploit-framework/embedded/bin/pg_ctl -D /Users/jcox/.msf4/db stop"
+
+# Don't load ranger configs, they already exist in ~
+# export RANGER_LOAD_DEFAULT_RC=FALSE
+
+# # Powerlevel9k setup
+# export DEFAULT_USER='jcox'
+# POWERLEVEL9K_SHORTEN_DIR_LENGTH=3
+# POWERLEVEL9K_SHORTEN_STRATEGY="truncate_from_right"
+# POWERLEVEL9K_STATUS_VERBOSE=false
+# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status history time)
+# POWERLEVEL9K_TIME_FORMAT="${${(%%):-%t}## }"
+# # tmux includes the user@host information, so let's save some space!
+# if [[ $TERM = "screen-256color" ]]; then 
+# 	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
+# else
+# 	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
+# fi
+
+# Statusline Setup
+_prompt_statusline_left_segments=(status user machine git-branch directory)
+_prompt_statusline_right_segments=(git-status history clock)

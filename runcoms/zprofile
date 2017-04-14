@@ -14,20 +14,18 @@ if [[ "$OSTYPE" == darwin* ]]; then
 fi
 
 #
-# Editors
-#
-
-export EDITOR='nano'
-export VISUAL='nano'
-export PAGER='less'
-
-#
 # Language
 #
 
 if [[ -z "$LANG" ]]; then
   export LANG='en_US.UTF-8'
 fi
+
+#
+# Time Zone
+#
+
+TZ=America/Los_Angeles
 
 #
 # Paths
@@ -43,9 +41,22 @@ typeset -gU cdpath fpath mailpath path
 
 # Set the list of directories that Zsh searches for programs.
 path=(
+  ~/bin
   /usr/local/{bin,sbin}
   $path
 )
+
+#
+# Editors
+#
+
+if [[ -e $(which subl 2>/dev/null) ]]; then 
+  export EDITOR='subl -w'
+else
+  export EDITOR=$(which vim nano pico vi 2>/dev/null | head -n 1)
+fi
+export VISUAL=$EDITOR
+export PAGER='less'
 
 #
 # Less
@@ -54,7 +65,7 @@ path=(
 # Set the default Less options.
 # Mouse-wheel scrolling has been disabled by -X (disable screen clearing).
 # Remove -X and -F (exit if the content fits on one screen) to enable it.
-export LESS='-F -g -i -M -R -S -w -X -z-4'
+export LESS='-g -i -M -R -S -X'
 
 # Set the Less input preprocessor.
 # Try both `lesspipe` and `lesspipe.sh` as either might exist on a system.
