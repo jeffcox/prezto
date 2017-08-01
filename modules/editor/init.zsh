@@ -289,7 +289,8 @@ fi
 # it will fall back and do nothing.
 function _prezto-zle-noop {  ; }
 zle -N _prezto-zle-noop
-local unbound_keys=(
+local -a unbound_keys
+unbound_keys=(
   "${key_info[F1]}"
   "${key_info[F2]}"
   "${key_info[F3]}"
@@ -306,7 +307,8 @@ local unbound_keys=(
   "${key_info[PageDown]}"
 )
 for keymap in $unbound_keys; do
-  bindkey -M main "${keymap}" _prezto-zle-noop
+  bindkey -M viins "${keymap}" _prezto-zle-noop
+  bindkey -M vicmd "${keymap}" _prezto-zle-noop
 done
 # Ctrl + Left and Ctrl + Right bindings to forward/backward word
 for keymap in viins vicmd; do
