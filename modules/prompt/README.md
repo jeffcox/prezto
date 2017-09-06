@@ -19,20 +19,21 @@ zstyle ':prezto:module:prompt' theme 'name'
 ### Prompt Display Length
 
 To change working directory prompt display length from 'short', set the
-following to 'long' (without '~' expansion) or 'full' (with '~' expansion)
+following to 'long' (without `~` expansion) or 'full' (with `~` expansion)
 in *zpreztorc*.
 
 ```sh
 zstyle ':prezto:module:prompt' pwd-length 'short'
 ```
 
-### Prompt Display Length
+### Display Return Value
 
-To change working directory prompt display length from 'short', set the
-following to 'long' (without '~' expansion) or 'full' (with '~' expansion)
-in *zpreztorc*.
+Some prompts display the return value in the prompt. If a prompt has support,
+this can be disabled with the following snippet.
 
-    zstyle ':prezto:module:prompt' pwd-length 'short'
+```sh
+zstyle ':prezto:module:prompt' show-return-val 'no'
+```
 
 Theming
 -------
