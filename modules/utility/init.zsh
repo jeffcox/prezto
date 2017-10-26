@@ -236,3 +236,5 @@ function noremoteglob {
   esac; done
   command $cmd "${(@)argo}"
 }
+
+alias unixtime='date "+%s"'
