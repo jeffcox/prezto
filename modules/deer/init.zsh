@@ -1,10 +1,9 @@
 #
 # Load Deer Module
 #
-fpath=("${0:h}/external" $fpath)
 
-autoload -U deer
+source ${ZDOTDIR:-$HOME}/.zprezto/modules/deer/external/deer
 zle -N deer
-zstyle -s ':prezto:module:deer' key-bindings 'key_bindings'
-bindkey "$key_bindings" deer
-unset key_bindings
+bindkey '\ek' deer
+
+zstyle ':deer:' height 23
