@@ -17,7 +17,7 @@
 # Print one of Murphy's laws
 if (( $+commands[fortune] )); then
   if [[ -t 0 || -t 1 ]]; then
-    fortune 50% murphy 50% murphy-o
+    fortune 99% murphy 1% murphy-o
     print
   fi
 fi
