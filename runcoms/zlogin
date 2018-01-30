@@ -14,11 +14,9 @@
   fi
 } &!
 
-# Print one of Murphy's laws
-if (( $+commands[fortune] )); then
+# Check for interactive and print Murphy's law
 [[ -o INTERACTIVE && -t 2 ]] && {
-
-  # Print a random, hopefully interesting, adage.
+if (( $+commands[fortune] )); then
     fortune 99% murphy 1% murphy-o
     print
   fi
