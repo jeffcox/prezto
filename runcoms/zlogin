@@ -16,8 +16,11 @@
 
 # Print one of Murphy's laws
 if (( $+commands[fortune] )); then
-  if [[ -t 0 || -t 1 ]]; then
+[[ -o INTERACTIVE && -t 2 ]] && {
+
+  # Print a random, hopefully interesting, adage.
     fortune 99% murphy 1% murphy-o
     print
   fi
-fi
+
+} >&2
