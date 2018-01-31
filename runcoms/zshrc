@@ -26,7 +26,7 @@ alias postgres.stop="/opt/metasploit-framework/embedded/bin/pg_ctl -D /Users/jco
 # POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status history time)
 # POWERLEVEL9K_TIME_FORMAT="${${(%%):-%t}## }"
 # # tmux includes the user@host information, so let's save some space!
-# if [[ $TERM = "screen-256color" ]]; then 
+# if [[ $TERM = "screen-256color" ]]; then
 # 	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
 # else
 # 	POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)
