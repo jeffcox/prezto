@@ -23,3 +23,6 @@ alias pushdf='pushd "$(pfd)"'
 # Start and stop tftpd
 alias tftpd.start='sudo launchctl load -w /System/Library/LaunchDaemons/tftp.plist'
 alias tftpd.stop='sudo launchctl unload -w /System/Library/LaunchDaemons/tftp.plist'
+
+# Add an alias to open with Xmplify
+alias xmpl='open -a /Applications/Xmplify.app'
