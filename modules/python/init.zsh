@@ -11,12 +11,12 @@
 if [[ -s "$HOME/.pyenv/bin/pyenv" ]]; then
   path=("$HOME/.pyenv/bin" $path)
   export PYENV_ROOT=$(pyenv root)
-  eval "$(pyenv init -)"
+  eval "$(pyenv init - --no-rehash zsh)"
 
 # Load package manager installed pyenv into the shell session.
 elif (( $+commands[pyenv] )); then
   export PYENV_ROOT=$(pyenv root)
-  eval "$(pyenv init -)"
+  eval "$(pyenv init - --no-rehash zsh)"
 
 # Prepend PEP 370 per user site packages directory, which defaults to
 # ~/Library/Python on macOS and ~/.local elsewhere, to PATH. The
@@ -106,7 +106,7 @@ if (( $+VIRTUALENVWRAPPER_VIRTUALENV || $+commands[virtualenv] )) && \
 
   if (( $pyenv_plugins[(i)virtualenv-init] <= $#pyenv_plugins )); then
     # Enable 'virtualenv' with 'pyenv'.
-    eval "$(pyenv virtualenv-init -)"
+    eval "$(pyenv virtualenv-init - zsh)"
 
     # Optionally activate 'virtualenvwrapper' plugin when available.
     if (( $pyenv_plugins[(i)virtualenvwrapper(_lazy|)] <= $#pyenv_plugins )); then
@@ -149,7 +149,9 @@ if (( $#commands[(i)pip(|[23])] )); then
   # Detect and use one available from among 'pip', 'pip2', 'pip3' variants
   pip_command="$commands[(i)pip(|[23])]"
 
-  if [[ "$pip_command" -nt "$cache_file" || ! -s "$cache_file" ]]; then
+  if [[ "$pip_command" -nt "$cache_file" \
+        || "${ZDOTDIR:-$HOME}/.zpreztorc" -nt "$cache_file" \
+        || ! -s "$cache_file" ]]; then
     # pip is slow; cache its output. And also support 'pip2', 'pip3' variants
     $pip_command completion --zsh \
       | sed -e "s|compctl -K [-_[:alnum:]]* pip|& pip2 pip3|" >! "$cache_file" 2> /dev/null
