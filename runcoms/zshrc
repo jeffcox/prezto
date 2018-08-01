@@ -34,4 +34,4 @@ alias postgres.stop="/opt/metasploit-framework/embedded/bin/pg_ctl -D /Users/jco
 
 # Statusline Setup
 _prompt_statusline_left_segments=(status user machine git-branch directory)
-_prompt_statusline_right_segments=(git-status history clock)
+_prompt_statusline_right_segments=(git-status history virtualenv clock)

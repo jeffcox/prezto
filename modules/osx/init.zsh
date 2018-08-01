@@ -26,3 +26,7 @@ alias tftpd.stop='sudo launchctl unload -w /System/Library/LaunchDaemons/tftp.pl
 
 # Add an alias to open with Xmplify
 alias xmpl='open -a /Applications/Xmplify.app'
+
+# Add an alias to turn on the SOCKS proxy
+alias sockson='networksetup -setsocksfirewallproxystate "Wi-Fi" on'
+alias socksoff='networksetup -setsocksfirewallproxystate "Wi-Fi" off'

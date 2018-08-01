@@ -1,0 +1,10 @@
+# Look up MAC address OIDs
+# Jeff Cox
+# WTFPL
+function mac-lookup {
+  echo $@
+  echo "curl https://api.macvendors.com/$@"
+  curl -G --data-urlencode "$@" https://api.macvendors.com/
+}
+
+mac-lookup $@
