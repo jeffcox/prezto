@@ -30,3 +30,4 @@ alias xmpl='open -a /Applications/Xmplify.app'
 # Add an alias to turn on the SOCKS proxy
 alias sockson='networksetup -setsocksfirewallproxystate "Wi-Fi" on'
 alias socksoff='networksetup -setsocksfirewallproxystate "Wi-Fi" off'
+alias socksquery='networksetup -getsocksfirewallproxy "Wi-Fi"'
