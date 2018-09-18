@@ -31,4 +31,4 @@ alias xmpl='open -a /Applications/Xmplify.app'
 alias sockson='networksetup -setsocksfirewallproxystate "Wi-Fi" on'
 alias socksoff='networksetup -setsocksfirewallproxystate "Wi-Fi" off'
 alias socksquery='networksetup -getsocksfirewallproxy "Wi-Fi"'
-alias serviceorder="networksetup -listnetworkserviceorder | grep "\([0-9]\)" | grep -v Port | cut -d " " -f 2"
+alias serviceorder='networksetup -listnetworkserviceorder | grep "\([0-9]\)" | grep -v Port | cut -d " " -f 2'
