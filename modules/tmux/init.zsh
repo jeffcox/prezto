@@ -41,6 +41,12 @@ if [[ -z "$TMUX" && -z "$EMACS" && -z "$VIM" && -z "$INSIDE_EMACS" && -z "$VSCOD
   exec tmux $_tmux_iterm_integration attach-session -d
 fi
 
+# Drop config in place if it doesn't exist
+
+if ( ! [[ -r ~/.tmux.conf ]]); then
+  cp ~/.zprezto/modules/tmux/tmux.conf ~/.tmux.conf
+fi
+
 #
 # Aliases
 #
