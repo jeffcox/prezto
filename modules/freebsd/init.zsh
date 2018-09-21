@@ -18,6 +18,8 @@ alias pkgu='sudo pkg update'
 alias pkgU='sudo pkg update && sudo pkg upgrade'
 alias pkgs='pkg search'
 alias pkgi='sudo pkg install'
+alias pkgx='sudo pkg remove'
+
 alias bsdu='sudo freebsd-update fetch'
 alias bsdU='sudo freebsd-update fetch && sudo freebsd-update install'
 # Not sure if I want to include these
