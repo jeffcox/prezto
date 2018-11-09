@@ -40,7 +40,7 @@ fi
 if [[ "$OSTYPE" == darwin* ]]; then
   # Perl is slow; cache its output.
   cache_file="${TMPDIR:-/tmp}/prezto-perl-cache.$UID.zsh"
-  perl_path="$HOME/Library/Perl/5.12"
+  perl_path="$HOME/Library/Perl/5.18"
 
   if [[ -f "$perl_path/lib/perl5/local/lib.pm" ]]; then
     if [[ "${ZDOTDIR:-$HOME}/.zpreztorc" -nt "$cache_file" || ! -s "$cache_file" ]]; then
