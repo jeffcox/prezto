@@ -244,3 +244,11 @@ function noremoteglob {
 }
 
 alias unixtime='date "+%s"'
+
+function unixgmt {
+  perl -le 'print scalar gmtime' $0
+}
+
+function unixlocal {
+  perl -le 'print scalar localtime' $0
+}
