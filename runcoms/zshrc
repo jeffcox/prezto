@@ -35,3 +35,12 @@ alias postgres.stop="/opt/metasploit-framework/embedded/bin/pg_ctl -D /Users/jco
 # Statusline Setup
 _prompt_statusline_left_segments=(status user machine git-branch directory)
 _prompt_statusline_right_segments=(git-status history virtualenv clock)
+
+# Perl local::lib paths
+if [[ -d $HOME/perl5 ]]; then
+  PATH="$HOME/perl5/bin${PATH:+:${PATH}}"; export PATH;
+  PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+  PERL_LOCAL_LIB_ROOT="$HOME/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+  PERL_MB_OPT="--install_base \"$HOME/perl5\""; export PERL_MB_OPT;
+  PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"; export PERL_MM_OPT;
+fi
