@@ -12,6 +12,10 @@ fi
 
 # Customize to your needs...
 
+# Change the default prompt_cr/prompt_sp back to <5.4.2
+# http://zsh.sourceforge.net/Doc/Release/Options.html#Prompting
+setopt prompt_sp 
+
 # Metasploit embedded Postgres shutdown
 alias postgres.stop="/opt/metasploit-framework/embedded/bin/pg_ctl -D /Users/jcox/.msf4/db stop"
 
