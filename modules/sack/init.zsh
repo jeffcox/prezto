@@ -54,7 +54,7 @@ sack() {
     # Deal with the options that only have to do with sack instead of ack
     sack__option=$1
     # By default, use ack:
-    sack__default_tool=ack
+    sack__default_tool=ag
     # Variable(s) to remove magic values from the code
     sack__dev_null=/dev/null
     # Color parameter is different for ack / ag than for grep:
@@ -89,7 +89,7 @@ sack() {
     fi
 
     # The actual wrapper around ack, ag or grep
-    $sack__default_tool $sack__color_param "$@" | tee >$sack__dev_null >(display_shortcuts) >(process_shorcut_paths > $sack__shortcut_file)
+    $sack__default_tool $sack__color_param "$@" | tee >$sack__dev_null >(display_shortcuts) >(process_shorcut_paths >! $sack__shortcut_file)
 }
 
 alias sag='sack -ag "$@"'
