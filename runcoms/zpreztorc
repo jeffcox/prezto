@@ -34,8 +34,9 @@ zstyle ':prezto:load' pmodule \
   'directory' \
   'spectrum' \
   'utility' \
-  'detectos' \
   'tmux' \
+  'osx' \
+  'macports' \
   'archive' \
   'git' \
   'python' \

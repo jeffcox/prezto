@@ -1,0 +1,17 @@
+# Messes with Slack to not be a lightbulb
+# Requires a css file at the specified path
+# Why are you using my fork?
+
+if [[ -w /Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/ssb-interop.js ]]; then
+  echo "document.addEventListener('DOMContentLoaded', function() {
+  var fs = require('fs'),
+  filePath = '/Users/jcox/src/slack-dark-mojave-theme/style.css';
+  fs.readFile(filePath, {encoding: 'utf-8'}, function(err, data) {
+    if (!err) {
+      var css = document.createElement('style')
+      css.innerText = data;
+      document.getElementsByTagName('head')[0].appendChild(css);
+    }
+  })
+});" >> /Applications/Slack.app/Contents/Resources/app.asar.unpacked/src/static/ssb-interop.js
+fi
