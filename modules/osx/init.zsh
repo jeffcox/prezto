@@ -33,5 +33,7 @@ alias socksoff='networksetup -setsocksfirewallproxystate "Wi-Fi" off'
 alias socksquery='networksetup -getsocksfirewallproxy "Wi-Fi"'
 alias serviceorder='networksetup -listnetworkserviceorder | grep "\([0-9]\)" | grep -v Port | cut -d " " -f 2'
 
+alias flushdns='sudo killall -HUP mDNSResponder'
+
 # Fix 'Open With' being slow/not working
 # alias fixopenw='/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -kill -r -domain local -domain system -domain user'
