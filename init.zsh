@@ -66,7 +66,7 @@ function zprezto-update {
   )
 }
 
-alias stashupd = "git stash && git pull && git submodule update --init --recursive && git stash apply"
+alias stashupd="git stash && git pull && git submodule update --init --recursive && git stash apply"
 
 #
 # Module Loader
