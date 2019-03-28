@@ -40,3 +40,6 @@
 [submodule "modules/prompt/external/powerlevel10k"]
 	path = modules/prompt/external/powerlevel10k
 	url = https://github.com/romkatv/powerlevel10k
+[submodule "modules/prompt/external/spaceship-prompt"]
+	path = modules/prompt/external/spaceship-prompt
+	url = https://github.com/denysdovhan/spaceship-prompt.git
