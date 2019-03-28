@@ -14,13 +14,13 @@ fi
 
 # Change the default prompt_cr/prompt_sp back to <5.4.2
 # http://zsh.sourceforge.net/Doc/Release/Options.html#Prompting
-setopt prompt_sp 
+setopt prompt_sp
 
 # Metasploit embedded Postgres shutdown
 alias postgres.stop="/opt/metasploit-framework/embedded/bin/pg_ctl -D /Users/jcox/.msf4/db stop"
 
 # Don't load ranger configs, they already exist in ~
-# export RANGER_LOAD_DEFAULT_RC=FALSE
+export RANGER_LOAD_DEFAULT_RC=FALSE
 
 # # Powerlevel9k setup
 # export DEFAULT_USER='jcox'
