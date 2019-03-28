@@ -37,3 +37,6 @@
 [submodule "modules/deer/external"]
 	path = modules/deer/external
 	url = https://github.com/Vifon/deer.git
+[submodule "modules/prompt/external/powerlevel10k"]
+	path = modules/prompt/external/powerlevel10k
+	url = https://github.com/romkatv/powerlevel10k
