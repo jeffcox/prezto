@@ -138,6 +138,8 @@ fi
 # macOS Everywhere
 if [[ "$OSTYPE" == darwin* ]]; then
   alias o='open'
+  alias pbc='pbcopy'
+  alias pbp='pbpaste'
 elif [[ "$OSTYPE" == cygwin* ]]; then
   alias o='cygstart'
   alias pbcopy='tee > /dev/clipboard'
@@ -153,9 +155,6 @@ else
     alias pbpaste='xsel --clipboard --output'
   fi
 fi
-
-alias pbc='pbcopy'
-alias pbp='pbpaste'
 
 # File Download
 if (( $+commands[curl] )); then
@@ -256,4 +255,15 @@ function unixgmt {
 
 function unixlocal {
   perl -le 'print scalar localtime' $0
+}
+
+# rips through every sub directory in PWD and updates the git repo if it is one
+function gitonup {
+  for D in *; do
+    if [[ -d $D ]]; then
+      cd $D
+      git pull
+      cd ..
+    fi
+  done
 }
