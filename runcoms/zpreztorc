@@ -43,6 +43,7 @@ zstyle ':prezto:load' pmodule \
   'archive' \
   'git' \
   'python' \
+  'perl' \
   'completion' \
   'syntax-highlighting' \
   'history-substring-search' \
