@@ -2,3 +2,7 @@
 # prompt ${BRIGHT_PROMPT:-'statusline -l'}
 export BAT_THEME=${BRIGHT_BAT:-'Catppuccin Latte'}
 # export vim_bg=light
+
+if [[ -f ~/.config/helix/bright.toml ]]; then
+  alias hx="hx -c ~/.config/helix/bright.toml"
+fi

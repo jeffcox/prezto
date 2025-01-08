@@ -39,8 +39,14 @@ if [[ ${+commands[bat]} ]]; then
 fi
 
 # Detect Sublime text and set it as EDITOR
-if (( ${+commands[subl]} )); then
-  export EDITOR='subl -w'
+# if (( ${+commands[subl]} )); then
+#   export EDITOR='subl -w'
+# fi
+
+# Detect Nova, our FOTM, and set it as EDITOR
+if (( ${+commands[nova]} )); then
+  export EDITOR='nova open --wait --no-recent'
+  alias nova='nova --no-recent'
 fi
 
 # Detect VS code terminal and change $EDITOR

@@ -104,6 +104,9 @@ F(){
         # SublimeText
         elif [[ "$EDITOR" =~ 'subl' ]]; then
             subl ${_fname}:${_lineno}
+        # is it time for case yet?
+        elif [[ "$EDITOR" =~ 'nova' ]]; then
+            nova open --no-wait --no-recent ${_fname} -l ${_lineno}
         # Emacs & Vim
         else
             ${EDITOR} +${_lineno} ${_fname}
