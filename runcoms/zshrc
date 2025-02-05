@@ -15,18 +15,8 @@ fi
 
 # Customize to your needs...
 
-# Change the default prompt_cr/prompt_sp back to <5.4.2
-# http://zsh.sourceforge.net/Doc/Release/Options.html#Prompting
-# setopt prompt_sp
-
-# Metasploit embedded Postgres shutdown
-# if [[ -d /opt/metasploit-framework/ ]]; then
-#   alias postgres.stop="/opt/metasploit-framework/embedded/bin/pg_ctl -D $HOME/.msf4/db stop"
-# fi
-
 # Don't load ranger configs, they already exist in ~
 export RANGER_LOAD_DEFAULT_RC=FALSE
-
 
 # Statusline Setup
 _prompt_statusline_left_segments=(status user machine git-branch directory)
@@ -36,22 +26,20 @@ _prompt_statusline_right_segments=(git-status history virtualenv clock)
 if (( ${+commands[bat]} )); then
   export BAT_THEME="Catppuccin Latte"
   export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+  export HOMEBREW_BAT=1
 fi
 
-# Detect Sublime text and set it as EDITOR
-# if (( ${+commands[subl]} )); then
-#   export EDITOR='subl -w'
-# fi
-
-# Detect Nova, our FOTM, and set it as EDITOR
+# Detect preferred GUI editor
 if (( ${+commands[nova]} )); then
   export EDITOR='nova open --wait --no-recent'
+  export VISUAL='nova open --wait --no-recent'
   alias nova='nova --no-recent'
 fi
 
 # Detect VS code terminal and change $EDITOR
 if [[ "${TERM_PROGRAM}" == "vscode" ]]; then
   export EDITOR='code --wait'
+  export VISUAL='code --wait'
 fi
 
 
@@ -64,11 +52,34 @@ if [[ -f ${HOME}/.docker/init-zsh.sh ]]; then
 fi
 
 # Set up aliases for eza
-alias k='eza -l'
-alias ka='eza -l --git -a'
+if (( ${+commands[eza]} )); then
+  alias k='eza -l'
+  alias ka='eza -l --git -a'
+fi
 
-# Disable the default python prompt modifications
-export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+# Disable python prompt modifications
+export VIRTUAL_ENV_DISABLE_PROMPT=12
+export PYENV_VIRTUALENV_DISABLE_PROMPT=12
+
+#
+# Fancy Colors
+#
+
+# Set variables that will be read by darken/brighten
+# export BRIGHT_BAT='Solarized (light)'
+# export BRIGHT_PROMPT='statusline -l'
+# export BRIGHT_TERM='Solarized Light'
+#
+# export DARK_BAT='Solarized (dark)'
+# export DARK_PROMPT='statusline -d'
+# export DARK_TERM='Solarized Dark'
+
+# Detect Dark mode and set it for the session
+if is-darwin; then
+  if [[ $(defaults read -g AppleInterfaceStyle 2&>/dev/null)  == 'Dark' ]]; then
+    darken
+  fi
+fi
 
 # Uncomment for profiling startup time (2/2)
 # zprof
