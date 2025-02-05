@@ -99,7 +99,7 @@ F(){
 
     if [ -f ${srg_shortcut} ]; then
         # VS Code
-        if [[ "$EDITOR" == 'code' ]]; then
+        if [[ "$EDITOR" =~ 'code' ]]; then
             code -g ${_fname}:${_lineno}
         # SublimeText
         elif [[ "$EDITOR" =~ 'subl' ]]; then
