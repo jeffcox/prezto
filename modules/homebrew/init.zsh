@@ -34,9 +34,9 @@ if (( $+commands[brew] )); then
   unset cache_file
 fi
 
-# Change stupid defaults
+# Configure Homebrew
 export HOMEBREW_NO_INSTALL_CLEANUP=1
-
+export HOMEBREW_AUTO_UPDATE_SECS=86400 # (default, 24 hours)
 
 #
 # Aliases
