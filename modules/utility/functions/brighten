@@ -1,6 +1,6 @@
 
 # prompt ${BRIGHT_PROMPT:-'statusline -l'}
-export BAT_THEME=${BRIGHT_BAT:-'Catppuccin Latte'}
+export BAT_THEME='Catppuccin Latte'
 # export vim_bg=light
 
 if [[ -f ~/.config/helix/bright.toml ]]; then

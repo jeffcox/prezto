@@ -1,6 +1,6 @@
 
 # prompt ${DARK_PROMPT:-'statusline -d'}
-export BAT_THEME=${DARK_BAT:-'Catppuccin Macchiato'}
+export BAT_THEME='Catppuccin Macchiato'
 # export vim_bg=dark
 
 if [[ -f ~/.config/helix/dark.toml ]]; then
