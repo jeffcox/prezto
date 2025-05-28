@@ -10,21 +10,25 @@ if (( ! ${+commands[kubectl]} )); then
   return 1
 fi
 
-# Enable completion for 'kubectl'.
-cache_file="${0:h}/cache.zsh"
-kubectl_command="${commands[kubectl]}"
+cache_completion () {
+  local cmd="$1"
+  local cache_file="${0:h}/cache-${cmd}.zsh"
+  local bin="${commands[$cmd]}"
 
-if [[ "${kubectl_command}" -nt "${cache_file}" || ! -s "${cache_file}" ]]; then
-  ${kubectl_command} completion zsh >! "${cache_file}" 2> /dev/null
-fi
+  if [[ -z "$bin" ]]; then
+    return
+  fi
 
-source "${cache_file}"
-unset cache_file kubectl_command
+  if [[ "${bin}" -nt "${cache_file}" || ! -s "${cache_file}" ]]; then
+    $bin completion zsh >! "${cache_file}" 2>/dev/null
+  fi
 
-# Add krew to path if it's installed
-if [[ -d $HOME/.krew ]]; then
-  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-fi
+  source "${cache_file}"
+}
+
+cache_completion kubectl
+cache_completion helm
+
 
 #
 # Aliases
