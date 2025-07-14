@@ -3,6 +3,7 @@
 #
 # Authors:
 #   Bruno Miguel Custodio <brunomcustodio@gmail.com>
+#   @jeffcox
 #
 
 # Return if requirements are not found.
@@ -12,35 +13,51 @@ fi
 
 # Add krew to PATH if installed
 if [[ -d ${KREW_ROOT:-$HOME/.krew}/bin ]]; then
-  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+  path=("${KREW_ROOT:-$HOME/.krew}/bin" "${(@)path}")
 fi
 
-cache_completion () {
-  local cmd="$1"
-  local cache_file="${0:h}/cache-${cmd}.zsh"
-  local bin="${commands[$cmd]}"
+# Use prezto standard cache directory for completions
+_dynamic_completion_dir="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/completions"
+mkdir -p "${_dynamic_completion_dir}"
 
-  if [[ -z "$bin" ]]; then
+load_completion () {
+  local cmd="$1"
+  local fn="_${cmd}"
+  local completion_file="${_dynamic_completion_dir}/${fn}"
+
+  if (( ! ${+commands[$cmd]} )); then
     return
   fi
 
-  if [[ "${bin}" -nt "${cache_file}" || ! -s "${cache_file}" ]]; then
-    $bin completion zsh >! "${cache_file}" 2>/dev/null
+  # Generate completion file if missing or stale
+  if [[ ! -s "${completion_file}" || ${commands[$cmd]} -nt "${completion_file}" ]]; then
+    $cmd completion zsh >! "${completion_file}" 2>/dev/null
   fi
 
-  source "${cache_file}"
+  # Add to fpath and autoload
+  if [[ -s "${completion_file}" ]]; then
+    fpath=("${_dynamic_completion_dir}" $fpath)
+    autoload -Uz "${fn}"
+  fi
 }
 
-cache_completion kubectl
-cache_completion helm
+# Hook up completions
+load_completion kubectl
+load_completion helm
 
+# Only run compinit once
+if [[ -z "$_compinit_done" ]]; then
+  autoload -Uz compinit
+  zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
+  compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
+  _compinit_done=1
+fi
 
 #
 # Aliases
 #
 
 alias kb='kubectl'
-
 alias kba='kubectl apply'
 alias kbc='kubectl config'
 alias kbcg='kubectl config get-contexts'
@@ -55,12 +72,10 @@ alias kbg='kubectl get'
 alias kbl='kubectl logs'
 alias kblf='kubectl logs --follow'
 alias kbr='kubectl run'
-
 alias wkb='watch -n 5 kubectl'
 
 kbn () {
-  kubectl config set-context --current --namespace=$1
+  kubectl config set-context --current --namespace="$1"
 }
 
-# name formatting
 zstyle ':prezto:module:contrib-kubernetes' dev-clusters-default 'dev'
