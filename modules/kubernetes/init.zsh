@@ -10,6 +10,11 @@ if (( ! ${+commands[kubectl]} )); then
   return 1
 fi
 
+# Add krew to PATH if installed
+if [[ -d ${KREW_ROOT:-$HOME/.krew}/bin ]]; then
+  export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+fi
+
 cache_completion () {
   local cmd="$1"
   local cache_file="${0:h}/cache-${cmd}.zsh"
