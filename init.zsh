@@ -10,8 +10,9 @@
 #
 
 # Check for the minimum supported version.
-min_zsh_version='4.3.11'
-if ! autoload -Uz is-at-least || ! is-at-least "$min_zsh_version"; then
+min_zsh_version='5.5'
+autoload -Uz is-at-least
+if ! is-at-least "$min_zsh_version"; then
   printf "prezto: old shell detected, minimum required: %s\n" "$min_zsh_version" >&2
   return 1
 fi
@@ -87,10 +88,8 @@ function pmodload {
     fi
   done
 
-  pmodule_dirs=("$ZPREZTODIR/modules" "$ZPREZTODIR/contrib" "$user_pmodule_dirs[@]")
-
-  # $argv is overridden in the anonymous function.
-  pmodules=("$argv[@]")
+  pmodule_dirs=("$ZPREZTODIR/modules" "$ZPREZTODIR/contrib" "${(@)user_pmodule_dirs}")
+  pmodules=("${(@)argv}")
 
   # Load Prezto modules.
   for pmodule in "$pmodules[@]"; do
@@ -112,13 +111,13 @@ function pmodload {
       pmodule_location=${locations[-1]}
 
       # Add functions to $fpath.
-      fpath=(${pmodule_location}/functions(-/FN) $fpath)
+      fpath+=(${pmodule_location}/functions(-/FN))
 
       function {
         local pfunction
 
         # Extended globbing is needed for listing autoloadable function directories.
-        setopt LOCAL_OPTIONS EXTENDED_GLOB
+        setopt LOCAL_OPTIONS NO_LOCAL_LOOPS EXTENDED_GLOB
 
         # Load Prezto functions.
         for pfunction in ${pmodule_location}/functions/$~pfunction_glob; do
@@ -143,7 +142,7 @@ function pmodload {
 
           # Extended globbing is needed for listing autoloadable function
           # directories.
-          setopt LOCAL_OPTIONS EXTENDED_GLOB
+          setopt LOCAL_OPTIONS NO_LOCAL_LOOPS EXTENDED_GLOB
 
           # Unload Prezto functions.
           for pfunction in ${pmodule_location}/functions/$~pfunction_glob; do
