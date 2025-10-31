@@ -44,7 +44,6 @@ zstyle ':prezto:load' pmodule \
   'git' \
   'python' \
   'direnv' \
-  'ansible' \
   'completion' \
   'kubernetes' \
   'syntax-highlighting' \

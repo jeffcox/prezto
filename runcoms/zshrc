@@ -1,5 +1,7 @@
 # Uncomment for profiling startup time (1/2)
 # zmodload zsh/zprof
+# setopt promptsubst
+# typeset -F SECONDS
 
 #
 # Executes commands at the start of an interactive session.
