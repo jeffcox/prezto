@@ -85,7 +85,7 @@ if [[ ${(@M)${(f)"$(ls --version 2>&1)"}:#*(GNU|lsd) *} ]]; then
 
   if zstyle -t ':prezto:module:utility:ls' color; then
     # Define colors for GNU ls if they're not already defined
-    if (( ! $+LS_COLORS )); then
+    if [[ ! -v LS_COLORS ]]; then
       # Try dircolors when available
       if is-callable 'dircolors'; then
         eval "$(dircolors --sh $HOME/.dir_colors(N))"
@@ -103,7 +103,7 @@ else
 
   if zstyle -t ':prezto:module:utility:ls' color; then
     # Define colors for BSD ls if they're not already defined
-    if (( ! $+LSCOLORS )); then
+    if [[ ! -v LSCOLORS ]]; then
       export LSCOLORS='exfxcxdxbxGxDxabagacad'
     fi
 
@@ -149,10 +149,10 @@ elif is-termux; then
 else
   alias o='xdg-open'
 
-  if (( $+commands[xclip] )); then
+  if [[ -v commands[xclip] ]]; then
     alias pbcopy='xclip -selection clipboard -in'
     alias pbpaste='xclip -selection clipboard -out'
-  elif (( $+commands[xsel] )); then
+  elif [[ -v commands[xsel] ]]; then
     alias pbcopy='xsel --clipboard --input'
     alias pbpaste='xsel --clipboard --output'
   fi
@@ -170,9 +170,9 @@ typeset -A _download_helpers=(
   wget    'wget --continue --progress=bar --timestamping'
 )
 
-if (( $+commands[$_download_helper] && $+_download_helpers[$_download_helper] )); then
+if [[ -v commands[$_download_helper] && -v _download_helpers[$_download_helper] ]]; then
   alias get="$_download_helpers[$_download_helper]"
-elif (( $+commands[curl] )); then
+elif [[ -v commands[curl] ]]; then
   alias get="$_download_helpers[curl]"
 fi
 
@@ -193,11 +193,11 @@ fi
 # Miscellaneous
 
 # Serves a directory via HTTP.
-if (( $#commands[(i)python(|[23])] )); then
+if [[ -v commands[python] || -v commands[python2] || -v commands[python3] ]]; then
   autoload -Uz is-at-least
-  if (( $+commands[python3] )); then
+  if [[ -v commands[python3] ]]; then
     alias http-serve='python3 -m http.server'
-  elif (( $+commands[python2] )); then
+  elif [[ -v commands[python2] ]]; then
     alias http-serve='python2 -m SimpleHTTPServer'
   elif is-at-least 3 ${"$(python --version 2>&1)"[(w)2]}; then
     alias http-serve='python -m http.server'
@@ -211,37 +211,37 @@ fi
 #
 
 # Makes a directory and changes to it.
-function mkdcd {
+mkdcd() {
   [[ -n "$1" ]] && mkdir -p "$1" && builtin cd "$1"
 }
 
 # Changes to a directory and lists its contents.
-function cdls {
+cdls() {
   builtin cd "$argv[-1]" && ls "${(@)argv[1,-2]}"
 }
 
 # Pushes an entry onto the directory stack and lists its contents.
-function pushdls {
+pushdls() {
   builtin pushd "$argv[-1]" && ls "${(@)argv[1,-2]}"
 }
 
 # Pops an entry off the directory stack and lists its contents.
-function popdls {
+popdls() {
   builtin popd "$argv[-1]" && ls "${(@)argv[1,-2]}"
 }
 
 # Prints columns 1 2 3 ... n.
-function slit {
+slit() {
   awk "{ print ${(j:,:):-\$${^@}} }"
 }
 
 # Finds files and executes a command on them.
-function find-exec {
+find-exec() {
   find . -type f -iname "*${1:-}*" -exec "${2:-file}" '{}' \;
 }
 
 # Displays user owned processes status.
-function psu {
+psu() {
   ps -U "${1:-$LOGNAME}" -o 'pid,%cpu,%mem,command' "${(@)argv[2,-1]}"
 }
 
@@ -257,7 +257,7 @@ function psu {
 # NOTE: This function is buggy and is not used anywhere until we can make sure
 # it's fixed. See https://github.com/sorin-ionescu/prezto/issues/1443 and
 # https://github.com/sorin-ionescu/prezto/issues/1521 for more information.
-function noremoteglob {
+noremoteglob() {
   local -a argo
   local cmd="$1"
   for arg in ${argv:2}; do case $arg in

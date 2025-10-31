@@ -20,10 +20,10 @@ pmodload 'helper'
 # Load manually installed or package manager installed pyenv into the shell
 # session.
 if [[ -s "${local_pyenv::=${PYENV_ROOT:-$HOME/.pyenv}/bin/pyenv}" ]] \
-      || (( $+commands[pyenv] )); then
+      || [[ -v commands[pyenv] ]]; then
 
   # Ensure manually installed pyenv is added to path when present.
-  [[ -s $local_pyenv ]] && path=($local_pyenv:h $path)
+  [[ -s $local_pyenv ]] && path=(${local_pyenv:h:A} $path)
 
   # Load pyenv into the shell session.
   eval "$(pyenv init - zsh)"
@@ -49,7 +49,7 @@ if (( ! $+commands[(i)python[0-9.]#] && ! $+functions[pyenv] && ! $+commands[con
   return 1
 fi
 
-function _python-workon-cwd {
+_python-workon-cwd() {
   # Check if this is a Git repo.
   local GIT_REPO_ROOT="$(git rev-parse --show-toplevel 2> /dev/null)"
   # Get absolute path, resolving symlinks.
@@ -96,7 +96,7 @@ fi
 
 # Load virtualenvwrapper into the shell session, if pre-requisites are met
 # and unless explicitly requested not to
-if (( $+VIRTUALENVWRAPPER_VIRTUALENV || $+commands[virtualenv] )) \
+if [[ -v VIRTUALENVWRAPPER_VIRTUALENV || -v commands[virtualenv] ]] \
       && zstyle -T ':prezto:module:python:virtualenv' initialize ; then
   # Set the directory where virtual environments are stored.
   export WORKON_HOME="${WORKON_HOME:-$HOME/.virtualenvs}"
@@ -112,7 +112,7 @@ if (( $+VIRTUALENVWRAPPER_VIRTUALENV || $+commands[virtualenv] )) \
   # can exist in 'pyenv' synthesized paths (e.g., '~/.pyenv/plugins') instead.
   local -a pyenv_plugins
   local pyenv_virtualenvwrapper_plugin_found
-  if (( $+commands[pyenv] )); then
+  if [[ -v commands[pyenv] ]]; then
     pyenv_plugins=(${(@oM)${(f)"$(pyenv commands --no-sh 2> /dev/null)"}:#virtualenv*})
 
     # Optionally activate 'virtualenv-init' plugin when available.

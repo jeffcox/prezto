@@ -20,7 +20,7 @@ fi
 # Load standard Homebrew shellenv into the shell session.
 # Load 'HOMEBREW_' prefixed variables only. Avoid loading 'PATH' related
 # variables as they are already handled in standard zsh configuration.
-if (( $+commands[brew] )); then
+if [[ -v commands[brew] ]]; then
   cache_file="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/brew-shellenv-cache.zsh"
   if [[ "$commands[brew]" -nt "$cache_file" \
       || "${ZDOTDIR:-$HOME}/.zpreztorc" -nt "$cache_file" \

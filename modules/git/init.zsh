@@ -6,7 +6,7 @@
 #
 
 # Return if requirements are not found.
-if (( ! $+commands[git] )); then
+if [[ ! -v commands[git] ]]; then
   return 1
 fi
 
