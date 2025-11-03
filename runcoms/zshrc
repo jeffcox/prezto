@@ -32,10 +32,9 @@ if (( ${+commands[bat]} )); then
 fi
 
 # Detect preferred GUI editor
-if (( ${+commands[nova]} )); then
-  export EDITOR='nova open --wait --no-recent'
-  export VISUAL='nova open --wait --no-recent'
-  alias nova='nova --no-recent'
+if (( ${+commands[zed]} )); then
+  export EDITOR='zed'
+  export VISUAL='zed'
 fi
 
 # Detect VS code terminal and change $EDITOR
