@@ -65,5 +65,14 @@ function prompt_damoekri_setup {
   RPROMPT='${git_info:+${(e)git_info[rprompt]}}${ruby_info:+${ruby_info[version]}}'
 }
 
+function prompt_damoekri_preview {
+  local +h PROMPT=''
+  local +h RPROMPT=''
+  local +h SPROMPT=''
+
+  editor-info 2> /dev/null
+  prompt_preview_theme 'damoekri'
+}
+
 prompt_damoekri_setup "$@"
 # vim: ft=zsh

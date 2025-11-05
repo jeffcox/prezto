@@ -156,5 +156,14 @@ ${(e)$(prompt_paradox_build_prompt)}
   SPROMPT='zsh: correct %F{red}%R%f to %F{green}%r%f [nyae]? '
 }
 
+function prompt_paradox_preview {
+  local +h PROMPT=''
+  local +h RPROMPT=''
+  local +h SPROMPT=''
+
+  editor-info 2> /dev/null
+  prompt_preview_theme 'paradox'
+}
+
 prompt_paradox_setup "$@"
 # vim: ft=zsh

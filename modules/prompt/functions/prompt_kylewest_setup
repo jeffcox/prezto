@@ -65,5 +65,14 @@ function prompt_kylewest_setup {
   RPROMPT='${ruby_info[version]}'
 }
 
+function prompt_kylewest_preview {
+  local +h PROMPT=''
+  local +h RPROMPT=''
+  local +h SPROMPT=''
+
+  editor-info 2> /dev/null
+  prompt_preview_theme 'kylewest'
+}
+
 prompt_kylewest_setup "$@"
 # vim: ft=zsh

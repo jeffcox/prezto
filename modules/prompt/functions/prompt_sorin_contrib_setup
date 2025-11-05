@@ -110,7 +110,7 @@ function prompt_sorin_contrib_preview {
   local +h SPROMPT=''
 
   editor-info 2> /dev/null
-  prompt_preview_theme 'sorin-contrib'
+  prompt_preview_theme 'sorin_contrib'
 }
 
 function prompt_sorin_contrib_setup {
