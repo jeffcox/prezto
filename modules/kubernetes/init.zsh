@@ -1,5 +1,5 @@
 #
-# Provides 'kubectl' aliases and utiities.
+# Provides 'kubectl' aliases and utilities.
 #
 # Authors:
 #   Bruno Miguel Custodio <brunomcustodio@gmail.com>
@@ -7,7 +7,7 @@
 #
 
 # Return if requirements are not found.
-if (( ! ${+commands[kubectl]} )); then
+if [[ ! -v commands[kubectl] ]]; then
   return 1
 fi
 
@@ -16,41 +16,12 @@ if [[ -d ${KREW_ROOT:-$HOME/.krew}/bin ]]; then
   path=("${KREW_ROOT:-$HOME/.krew}/bin" "${(@)path}")
 fi
 
-# Use prezto standard cache directory for completions
-_dynamic_completion_dir="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/completions"
-mkdir -p "${_dynamic_completion_dir}"
-
-load_completion () {
-  local cmd="$1"
-  local fn="_${cmd}"
-  local completion_file="${_dynamic_completion_dir}/${fn}"
-
-  if (( ! ${+commands[$cmd]} )); then
-    return
+# Register completions via the central helper (defined in modules/completion).
+if typeset -f __prezto_register_dynamic_completion >/dev/null 2>&1; then
+  __prezto_register_dynamic_completion kubectl kubectl completion zsh
+  if [[ -v commands[helm] ]]; then
+    __prezto_register_dynamic_completion helm helm completion zsh
   fi
-
-  # Generate completion file if missing or stale
-  if [[ ! -s "${completion_file}" || ${commands[$cmd]} -nt "${completion_file}" ]]; then
-    $cmd completion zsh >! "${completion_file}" 2>/dev/null
-  fi
-
-  # Add to fpath and autoload
-  if [[ -s "${completion_file}" ]]; then
-    fpath=("${_dynamic_completion_dir}" $fpath)
-    autoload -Uz "${fn}"
-  fi
-}
-
-# Hook up completions
-load_completion kubectl
-load_completion helm
-
-# Only run compinit once
-if [[ -z "$_compinit_done" ]]; then
-  autoload -Uz compinit
-  zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
-  compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
-  _compinit_done=1
 fi
 
 #
@@ -72,9 +43,18 @@ alias kbg='kubectl get'
 alias kbl='kubectl logs'
 alias kblf='kubectl logs --follow'
 alias kbr='kubectl run'
-alias wkb='watch -n 5 kubectl'
 
+# Only define watch helper if watch exists (macOS portability).
+if [[ -v commands[watch] ]]; then
+  alias wkb='watch -n 5 kubectl'
+fi
+
+# Safer namespace switcher (guards missing arg).
 kbn () {
+  if [[ -z "$1" ]]; then
+    print -u2 "usage: kbn <namespace>"
+    return 1
+  fi
   kubectl config set-context --current --namespace="$1"
 }
 

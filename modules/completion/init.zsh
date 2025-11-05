@@ -11,19 +11,72 @@ if [[ $TERM == 'dumb' ]]; then
   return 1
 fi
 
+# Keep $fpath unique and global across modules to prevent duplicates.
+typeset -gU fpath
+
 # Add zsh-completions to $fpath.
 fpath=(${0:h}/external/src $fpath)
 
-# Add completion for keg-only brewed curl on macOS when available.
-if (( $+commands[brew] )); then
-  brew_prefix=${HOMEBREW_PREFIX:-${HOMEBREW_REPOSITORY:-$commands[brew]:A:h:h}}
-  # $HOMEBREW_PREFIX defaults to $HOMEBREW_REPOSITORY but is explicitly set to
-  # /usr/local when $HOMEBREW_REPOSITORY is /usr/local/Homebrew.
-  # https://github.com/Homebrew/brew/blob/2a850e02d8f2dedcad7164c2f4b95d340a7200bb/bin/brew#L66-L69
-  [[ $brew_prefix == '/usr/local/Homebrew' ]] && brew_prefix=$brew_prefix:h
-  fpath=($brew_prefix/opt/curl/share/zsh/site-functions(/N) $fpath)
-  unset brew_prefix
-fi
+# ------------------------------------------------------------------------------
+# Dynamic completion helper for modules that can generate their own completions.
+# Usage:
+#   __prezto_register_dynamic_completion <cmd> <generator words...>
+# Examples:
+#   __prezto_register_dynamic_completion kubectl kubectl completion zsh
+#   __prezto_register_dynamic_completion uv      uv generate-shell-completion zsh
+#   __prezto_register_dynamic_completion uvx     uvx --generate-shell-completion zsh
+# Notes:
+# - Writes directly to file (no pipes) to avoid SIGPIPE panics in generators.
+# - Adds a per-user cache dir to $fpath exactly once.
+# - Installs a matching compdef so <cmd> uses its _<cmd> function.
+# - Honors:
+#     zstyle ':prezto:module:completion' disable-dynamic yes|no
+#     zstyle ':prezto:module:completion' debug-dynamic   yes|no
+# ------------------------------------------------------------------------------
+__prezto_register_dynamic_completion() {
+  local cmd
+  local dir
+  local file
+  local fn
+
+  if [[ $# -lt 2 ]]; then
+    return 1
+  fi
+
+  cmd="$1"
+  shift
+
+  if zstyle -t ':prezto:module:completion' disable-dynamic; then
+    return 0
+  fi
+
+  if [[ ! -v commands[$cmd] ]]; then
+    return 1
+  fi
+
+  dir="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/completions"
+  if [[ ! -d "$dir" ]]; then
+    mkdir -p "$dir" || return 0
+  fi
+
+  fn="_${cmd}"
+  file="${dir}/${fn}"
+
+  if [[ ! -s "$file" || ${commands[$cmd]} -nt "$file" ]]; then
+    "$@" >! "$file" 2>/dev/null || return 0
+  fi
+
+  if (( ${fpath[(I)$dir]} == 0 )); then
+    fpath=("$dir" $fpath)
+  fi
+
+  autoload -Uz "$fn"
+  compdef "$fn" "$cmd"
+
+  if zstyle -t ':prezto:module:completion' debug-dynamic; then
+    print -r -- "[completion] ${cmd} -> ${file} (fn ${fn})" > /dev/stderr
+  fi
+}
 
 #
 # Options
