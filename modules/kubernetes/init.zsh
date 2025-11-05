@@ -1,5 +1,5 @@
 #
-# Provides 'kubectl' aliases and utiities.
+# Provides 'kubectl' aliases and utilities.
 #
 # Authors:
 #   Bruno Miguel Custodio <brunomcustodio@gmail.com>
@@ -7,7 +7,7 @@
 #
 
 # Return if requirements are not found.
-if (( ! ${+commands[kubectl]} )); then
+if [[ ! -v commands[kubectl] ]]; then
   return 1
 fi
 
@@ -17,23 +17,10 @@ if [[ -d ${KREW_ROOT:-$HOME/.krew}/bin ]]; then
 fi
 
 # Register completions via the central helper (defined in modules/completion).
-# If the helper isn't loaded yet (unusual load order), fall back to a
-# minimal local generator that mirrors the helper’s behavior (no pipes).
 if typeset -f __prezto_register_dynamic_completion >/dev/null 2>&1; then
-  __prezto_register_dynamic_completion kubectl "kubectl completion zsh"
-  __prezto_register_dynamic_completion helm    "helm completion zsh"
-else
-  _dyn="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/completions"
-  mkdir -p "$_dyn"
-  if (( ${+commands[kubectl]} )); then
-    [[ ! -s "$_dyn/_kubectl" || ${commands[kubectl]} -nt "$_dyn/_kubectl" ]] && kubectl completion zsh >! "$_dyn/_kubectl" 2>/dev/null
-    (( ${fpath[(I)$_dyn]} == 0 )) && fpath=("$_dyn" $fpath)
-    autoload -Uz _kubectl; compdef _kubectl kubectl
-  fi
-  if (( ${+commands[helm]} )); then
-    [[ ! -s "$_dyn/_helm" || ${commands[helm]} -nt "$_dyn/_helm" ]] && helm completion zsh >! "$_dyn/_helm" 2>/dev/null
-    (( ${fpath[(I)$_dyn]} == 0 )) && fpath=("$_dyn" $fpath)
-    autoload -Uz _helm; compdef _helm helm
+  __prezto_register_dynamic_completion kubectl kubectl completion zsh
+  if [[ -v commands[helm] ]]; then
+    __prezto_register_dynamic_completion helm helm completion zsh
   fi
 fi
 
@@ -56,9 +43,18 @@ alias kbg='kubectl get'
 alias kbl='kubectl logs'
 alias kblf='kubectl logs --follow'
 alias kbr='kubectl run'
-alias wkb='watch -n 5 kubectl'
 
+# Only define watch helper if watch exists (macOS portability).
+if [[ -v commands[watch] ]]; then
+  alias wkb='watch -n 5 kubectl'
+fi
+
+# Safer namespace switcher (guards missing arg).
 kbn () {
+  if [[ -z "$1" ]]; then
+    print -u2 "usage: kbn <namespace>"
+    return 1
+  fi
   kubectl config set-context --current --namespace="$1"
 }
 

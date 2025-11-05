@@ -17,62 +17,66 @@ typeset -gU fpath
 # Add zsh-completions to $fpath.
 fpath=(${0:h}/external/src $fpath)
 
-# Add completion for keg-only brewed curl on macOS when available.
-if (( $+commands[brew] )); then
-  brew_prefix=${HOMEBREW_PREFIX:-${HOMEBREW_REPOSITORY:-$commands[brew]:A:h:h}}
-  # $HOMEBREW_PREFIX defaults to $HOMEBREW_REPOSITORY but is explicitly set to
-  # /usr/local when $HOMEBREW_REPOSITORY is /usr/local/Homebrew.
-  # https://github.com/Homebrew/brew/blob/2a850e02d8f2dedcad7164c2f4b95d340a7200bb/bin/brew#L66-L69
-  [[ $brew_prefix == '/usr/local/Homebrew' ]] && brew_prefix=$brew_prefix:h
-  fpath=($brew_prefix/opt/curl/share/zsh/site-functions(/N) $fpath)
-  unset brew_prefix
-fi
-
 # ------------------------------------------------------------------------------
 # Dynamic completion helper for modules that can generate their own completions.
 # Usage:
-#   __prezto_register_dynamic_completion <cmd> <generate_cmd>
-# Example:
-#   __prezto_register_dynamic_completion kubectl "kubectl completion zsh"
-#   __prezto_register_dynamic_completion uv      "uv generate-shell-completion zsh"
-#   __prezto_register_dynamic_completion uvx     "uvx --generate-shell-completion zsh"
+#   __prezto_register_dynamic_completion <cmd> <generator words...>
+# Examples:
+#   __prezto_register_dynamic_completion kubectl kubectl completion zsh
+#   __prezto_register_dynamic_completion uv      uv generate-shell-completion zsh
+#   __prezto_register_dynamic_completion uvx     uvx --generate-shell-completion zsh
 # Notes:
-# - Writes directly to a file (no pipes) to avoid SIGPIPE panics in generators.
+# - Writes directly to file (no pipes) to avoid SIGPIPE panics in generators.
 # - Adds a per-user cache dir to $fpath exactly once.
 # - Installs a matching compdef so <cmd> uses its _<cmd> function.
+# - Honors:
+#     zstyle ':prezto:module:completion' disable-dynamic yes|no
+#     zstyle ':prezto:module:completion' debug-dynamic   yes|no
 # ------------------------------------------------------------------------------
 __prezto_register_dynamic_completion() {
-  local cmd="$1"
-  local gen="$2"
-  local dir file fn
+  local cmd
+  local dir
+  local file
+  local fn
 
-  # Require the command to exist before we try to generate its completion.
-  if (( ! ${+commands[$cmd]} )); then
+  if [[ $# -lt 2 ]]; then
+    return 1
+  fi
+
+  cmd="$1"
+  shift
+
+  if zstyle -t ':prezto:module:completion' disable-dynamic; then
     return 0
   fi
 
+  if [[ ! -v commands[$cmd] ]]; then
+    return 1
+  fi
+
   dir="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/completions"
-  mkdir -p "$dir" || return 0
+  if [[ ! -d "$dir" ]]; then
+    mkdir -p "$dir" || return 0
+  fi
 
   fn="_${cmd}"
   file="${dir}/${fn}"
 
-  # Generate once, or refresh if the binary is newer than the cached file.
   if [[ ! -s "$file" || ${commands[$cmd]} -nt "$file" ]]; then
-    # No pipes: write directly to file to avoid BrokenPipe panics from generators.
-    eval "$gen" >! "$file" 2>/dev/null || return 0
+    "$@" >! "$file" 2>/dev/null || return 0
   fi
 
-  # Put the dir in $fpath exactly once.
   if (( ${fpath[(I)$dir]} == 0 )); then
     fpath=("$dir" $fpath)
   fi
 
-  # Autoload and bind the function to the command name.
   autoload -Uz "$fn"
   compdef "$fn" "$cmd"
-}
 
+  if zstyle -t ':prezto:module:completion' debug-dynamic; then
+    print -r -- "[completion] ${cmd} -> ${file} (fn ${fn})" > /dev/stderr
+  fi
+}
 
 #
 # Options
