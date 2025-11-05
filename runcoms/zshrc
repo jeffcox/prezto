@@ -20,13 +20,12 @@ fi
 # Don't load ranger configs, they already exist in ~
 export RANGER_LOAD_DEFAULT_RC=FALSE
 
-# Statusline Setup
-_prompt_statusline_left_segments=(status user machine git-branch directory)
-_prompt_statusline_right_segments=(git-status history virtualenv clock)
-
 # Configure bat
+# This is now set in
+# export BAT_THEME="ayu-light"
 if (( ${+commands[bat]} )); then
-  export BAT_THEME="Catppuccin Latte"
+  export BAT_LIGHT="ayu-light"
+  export BAT_DARK="ayu-mirage"
   export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
   export HOMEBREW_BAT=1
 fi
@@ -61,19 +60,6 @@ fi
 # Disable python prompt modifications
 export VIRTUAL_ENV_DISABLE_PROMPT=12
 export PYENV_VIRTUALENV_DISABLE_PROMPT=12
-
-#
-# Fancy Colors
-#
-
-# Set variables that will be read by darken/brighten
-# export BRIGHT_BAT='Solarized (light)'
-# export BRIGHT_PROMPT='statusline -l'
-# export BRIGHT_TERM='Solarized Light'
-#
-# export DARK_BAT='Solarized (dark)'
-# export DARK_PROMPT='statusline -d'
-# export DARK_TERM='Solarized Dark'
 
 # Detect Dark mode and set it for the session
 if is-darwin; then
