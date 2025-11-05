@@ -45,7 +45,7 @@ zstyle ':prezto:load' pmodule \
   'direnv' \
   'completion' \
   'kubernetes' \
-  'uv' \
+  'python' \
   'syntax-highlighting' \
   'history-substring-search' \
   'prompt' \
