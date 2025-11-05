@@ -1,6 +1,6 @@
 # Prezto — Instantly Awesome Zsh
 
-This is a personal fork.  You probably shouldn't use it.
+This is a personal fork.  You definitely shouldn't use it.
 
 Prezto is the configuration framework for [Zsh][1]; it enriches the command line
 interface environment with sane defaults, aliases, functions, auto completion,
@@ -11,7 +11,7 @@ and prompt themes.
 ### Manual
 
 Prezto will work with any recent release of Zsh, but the minimum required
-version is **4.3.11**.
+version is **5.5**.
 
 01. Launch Zsh:
 

@@ -166,13 +166,6 @@ zstyle ':prezto:module:history-substring-search' case-sensitive 'yes'
 zstyle ':prezto:module:osx:man' dash-keyword 'manpages'
 
 #
-# Pacman
-#
-
-# Set the Pacman frontend.
-# zstyle ':prezto:module:pacman' frontend 'yaourt'
-
-#
 # Prompt
 #
 
@@ -200,23 +193,6 @@ zstyle ':prezto:module:python:virtualenv' auto-switch 'no'
 # Automatically initialize virtualenvwrapper if pre-requisites are met.
 zstyle ':prezto:module:python:virtualenv' initialize 'no'
 zstyle ':prezto:module:python' skip-virtualenvwrapper-init 'on'
-
-#
-# Ruby
-#
-
-# Auto switch the Ruby version on directory change.
-zstyle ':prezto:module:ruby:chruby' auto-switch 'yes'
-
-#
-# Screen
-#
-
-# Auto start a session when Zsh is launched in a local terminal.
-# zstyle ':prezto:module:screen:auto-start' local 'yes'
-
-# Auto start a session when Zsh is launched in a SSH connection.
-# zstyle ':prezto:module:screen:auto-start' remote 'yes'
 
 #
 # SSH
