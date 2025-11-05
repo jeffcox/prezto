@@ -42,10 +42,10 @@ zstyle ':prezto:load' pmodule \
   'homebrew' \
   'archive' \
   'git' \
-  'python' \
   'direnv' \
   'completion' \
   'kubernetes' \
+  'uv' \
   'syntax-highlighting' \
   'history-substring-search' \
   'prompt' \

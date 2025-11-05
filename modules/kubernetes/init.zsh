@@ -16,41 +16,25 @@ if [[ -d ${KREW_ROOT:-$HOME/.krew}/bin ]]; then
   path=("${KREW_ROOT:-$HOME/.krew}/bin" "${(@)path}")
 fi
 
-# Use prezto standard cache directory for completions
-_dynamic_completion_dir="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/completions"
-mkdir -p "${_dynamic_completion_dir}"
-
-load_completion () {
-  local cmd="$1"
-  local fn="_${cmd}"
-  local completion_file="${_dynamic_completion_dir}/${fn}"
-
-  if (( ! ${+commands[$cmd]} )); then
-    return
+# Register completions via the central helper (defined in modules/completion).
+# If the helper isn't loaded yet (unusual load order), fall back to a
+# minimal local generator that mirrors the helper’s behavior (no pipes).
+if typeset -f __prezto_register_dynamic_completion >/dev/null 2>&1; then
+  __prezto_register_dynamic_completion kubectl "kubectl completion zsh"
+  __prezto_register_dynamic_completion helm    "helm completion zsh"
+else
+  _dyn="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/completions"
+  mkdir -p "$_dyn"
+  if (( ${+commands[kubectl]} )); then
+    [[ ! -s "$_dyn/_kubectl" || ${commands[kubectl]} -nt "$_dyn/_kubectl" ]] && kubectl completion zsh >! "$_dyn/_kubectl" 2>/dev/null
+    (( ${fpath[(I)$_dyn]} == 0 )) && fpath=("$_dyn" $fpath)
+    autoload -Uz _kubectl; compdef _kubectl kubectl
   fi
-
-  # Generate completion file if missing or stale
-  if [[ ! -s "${completion_file}" || ${commands[$cmd]} -nt "${completion_file}" ]]; then
-    $cmd completion zsh >! "${completion_file}" 2>/dev/null
+  if (( ${+commands[helm]} )); then
+    [[ ! -s "$_dyn/_helm" || ${commands[helm]} -nt "$_dyn/_helm" ]] && helm completion zsh >! "$_dyn/_helm" 2>/dev/null
+    (( ${fpath[(I)$_dyn]} == 0 )) && fpath=("$_dyn" $fpath)
+    autoload -Uz _helm; compdef _helm helm
   fi
-
-  # Add to fpath and autoload
-  if [[ -s "${completion_file}" ]]; then
-    fpath=("${_dynamic_completion_dir}" $fpath)
-    autoload -Uz "${fn}"
-  fi
-}
-
-# Hook up completions
-load_completion kubectl
-load_completion helm
-
-# Only run compinit once
-if [[ -z "$_compinit_done" ]]; then
-  autoload -Uz compinit
-  zstyle ':completion:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
-  compinit -d "${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
-  _compinit_done=1
 fi
 
 #

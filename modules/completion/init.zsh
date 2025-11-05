@@ -11,6 +11,9 @@ if [[ $TERM == 'dumb' ]]; then
   return 1
 fi
 
+# Keep $fpath unique and global across modules to prevent duplicates.
+typeset -gU fpath
+
 # Add zsh-completions to $fpath.
 fpath=(${0:h}/external/src $fpath)
 
@@ -24,6 +27,52 @@ if (( $+commands[brew] )); then
   fpath=($brew_prefix/opt/curl/share/zsh/site-functions(/N) $fpath)
   unset brew_prefix
 fi
+
+# ------------------------------------------------------------------------------
+# Dynamic completion helper for modules that can generate their own completions.
+# Usage:
+#   __prezto_register_dynamic_completion <cmd> <generate_cmd>
+# Example:
+#   __prezto_register_dynamic_completion kubectl "kubectl completion zsh"
+#   __prezto_register_dynamic_completion uv      "uv generate-shell-completion zsh"
+#   __prezto_register_dynamic_completion uvx     "uvx --generate-shell-completion zsh"
+# Notes:
+# - Writes directly to a file (no pipes) to avoid SIGPIPE panics in generators.
+# - Adds a per-user cache dir to $fpath exactly once.
+# - Installs a matching compdef so <cmd> uses its _<cmd> function.
+# ------------------------------------------------------------------------------
+__prezto_register_dynamic_completion() {
+  local cmd="$1"
+  local gen="$2"
+  local dir file fn
+
+  # Require the command to exist before we try to generate its completion.
+  if (( ! ${+commands[$cmd]} )); then
+    return 0
+  fi
+
+  dir="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/completions"
+  mkdir -p "$dir" || return 0
+
+  fn="_${cmd}"
+  file="${dir}/${fn}"
+
+  # Generate once, or refresh if the binary is newer than the cached file.
+  if [[ ! -s "$file" || ${commands[$cmd]} -nt "$file" ]]; then
+    # No pipes: write directly to file to avoid BrokenPipe panics from generators.
+    eval "$gen" >! "$file" 2>/dev/null || return 0
+  fi
+
+  # Put the dir in $fpath exactly once.
+  if (( ${fpath[(I)$dir]} == 0 )); then
+    fpath=("$dir" $fpath)
+  fi
+
+  # Autoload and bind the function to the command name.
+  autoload -Uz "$fn"
+  compdef "$fn" "$cmd"
+}
+
 
 #
 # Options
