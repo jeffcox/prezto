@@ -54,3 +54,25 @@ function is-cygwin {
 function is-termux {
   [[ "$OSTYPE" == linux-android ]]
 }
+
+# Return 0 if <name> appears in zstyle ':prezto:load' pmodule …, else 1.
+prezto_module_declared() {
+  emulate -L zsh
+  setopt typeset_silent
+
+  local name="$1"
+  if [[ ! -n "$name" ]]; then
+    return 1
+  fi
+
+  local -a _mods
+  if ! zstyle -a ':prezto:load' pmodule _mods 2>/dev/null; then
+    return 1
+  fi
+
+  if (( ${_mods[(I)$name]} > 0 )); then
+    return 0
+  else
+    return 1
+  fi
+}

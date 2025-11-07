@@ -68,12 +68,19 @@ zstyle ':prezto:load' pmodule \
 # zstyle ':prezto:module:completion:*:hosts' etc-host-ignores \
 #   '0.0.0.0' '127.0.0.1'
 
+# Disable homebrew's site-functions
+# zstyle ':prezto:module:completion' enable-homebrew-site-functions no
+
+# Be paranoid about completions
+# zstyle ':prezto:module:completion' strict-audit yes
+
 # enable debug of the dynamic completion generator
 # zstyle ':prezto:module:completion' debug-dynamic yes
 
 # disable the dynamic generator - this will impact
 # * kubernetes (kubernetes and helm completion)
-# * uv (uv and uvx compltion)
+# * uv (uv and uvx completion)
+# on some platforms (linux without brew)
 # zstyle ':prezto:module:completion' disable-dynamic yes
 
 #

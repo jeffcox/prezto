@@ -6,6 +6,8 @@
 #   Sorin Ionescu <sorin.ionescu@gmail.com>
 #
 
+pmodload helper
+
 # Return if requirements are not found.
 if [[ $TERM == 'dumb' ]]; then
   return 1
@@ -16,6 +18,19 @@ typeset -gU fpath
 
 # Add zsh-completions to $fpath.
 fpath=(${0:h}/external/src $fpath)
+
+# -- homebrew static completions (macOS only, owned here) --------------------
+# prevent with:
+#   zstyle ':prezto:module:completion' enable-homebrew-site-functions no
+if is-darwin && ( prezto_module_declared homebrew \
+  && zstyle -T ':prezto:module:completion' enable-homebrew-site-functions ); then
+
+  local brew_sf="/opt/homebrew/share/zsh/site-functions"
+  if [[ -d "$brew_sf" ]] && (( ${fpath[(I)$brew_sf]} == 0 )); then
+    fpath=("$brew_sf" $fpath)
+  fi
+fi
+
 
 # ------------------------------------------------------------------------------
 # Dynamic completion helper for modules that can generate their own completions.
@@ -33,13 +48,24 @@ fpath=(${0:h}/external/src $fpath)
 #     zstyle ':prezto:module:completion' disable-dynamic yes|no
 #     zstyle ':prezto:module:completion' debug-dynamic   yes|no
 # ------------------------------------------------------------------------------
+# -- dynamic completion helper ----------------------------------------------
+# usage:
+#   __prezto_register_dynamic_completion <cmd> <generator words...>
+# notes:
+#   * skips generation if any _<cmd> already exists in $fpath
+#   * returns 1 if command missing or generator fails
+
 __prezto_register_dynamic_completion() {
+  emulate -L zsh
+  setopt typeset_silent
+
   local cmd
+  local d
   local dir
   local file
   local fn
 
-  if [[ $# -lt 2 ]]; then
+  if (( $# <= 2 )); then
     return 1
   fi
 
@@ -50,20 +76,30 @@ __prezto_register_dynamic_completion() {
     return 0
   fi
 
+  # require command to exist
   if [[ ! -v commands[$cmd] ]]; then
     return 1
   fi
 
+  fn="_${cmd}"
+
+  # if any static _<cmd> exists, prefer it and stop
+  for d in $fpath; do
+    if [[ -s "$d/$fn" ]]; then
+      return 0
+    fi
+  done
+
   dir="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/completions"
   if [[ ! -d "$dir" ]]; then
-    mkdir -p "$dir" || return 0
+    mkdir -p "$dir"
   fi
 
-  fn="_${cmd}"
   file="${dir}/${fn}"
 
+  # generate only if missing or older than the binary
   if [[ ! -s "$file" || ${commands[$cmd]} -nt "$file" ]]; then
-    "$@" >! "$file" 2>/dev/null || return 0
+    "$@" >! "$file" 2>/dev/null || return 1
   fi
 
   if (( ${fpath[(I)$dir]} == 0 )); then
@@ -77,6 +113,7 @@ __prezto_register_dynamic_completion() {
     print -r -- "[completion] ${cmd} -> ${file} (fn ${fn})" > /dev/stderr
   fi
 }
+
 
 #
 # Options
@@ -107,18 +144,40 @@ LS_COLORS=${LS_COLORS:-'di=34:ln=35:so=32:pi=33:ex=31:bd=36;01:cd=33;01:su=31;40
 # cache time of 20 hours, so it should almost always regenerate the first time a
 # shell is opened each day.
 autoload -Uz compinit
-_comp_path="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
-# #q expands globs in conditional expressions
-if [[ $_comp_path(#qNmh-20) ]]; then
-  # -C (skip function check) implies -i (skip security check).
-  compinit -C -d "$_comp_path"
+local _comp_path="${XDG_CACHE_HOME:-$HOME/.cache}/prezto/zcompdump"
+
+if zstyle -t ':prezto:module:completion' strict-audit; then
+  # prune insecure dirs silently, then run normal compinit
+  local -a bad clean
+  bad=(${(f)"$(compaudit 2>/dev/null)"})
+  if (( ${#bad} )); then
+    local p
+    for p in $fpath; do
+      if (( ${bad[(I)$p]} == 0 )); then
+        clean+=("$p")
+      fi
+    done
+    fpath=("${clean[@]}")
+  fi
+  if [[ $_comp_path(#qNmh-20) ]]; then
+    compinit -C -d "$_comp_path"
+  else
+    mkdir -p "$_comp_path:h"
+    compinit -d "$_comp_path"
+    touch "$_comp_path"
+  fi
 else
-  mkdir -p "$_comp_path:h"
-  compinit -i -d "$_comp_path"
-  # Keep $_comp_path younger than cache time even if it isn't regenerated.
-  touch "$_comp_path"
+  # fast path (original behavior)
+  if [[ $_comp_path(#qNmh-20) ]]; then
+    compinit -C -d "$_comp_path"
+  else
+    mkdir -p "$_comp_path:h"
+    compinit -i -d "$_comp_path"
+    touch "$_comp_path"
+  fi
 fi
 unset _comp_path
+
 
 #
 # Styles
